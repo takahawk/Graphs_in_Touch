@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Graphs in Touch</string>
+    <string name="action_settings">Settings</string>
+    <string name="save_to_file">Save to File</string>
+    <string name="load_from_file">Load from File</string>
+    <string name="perform_algorithm">Perform algorithm</string>
+
+    <string name="dfs_algorithm">Depth-First Search</string>
+    <string name="prims_algorithm">Prim\'s algorithm</string>
+    <string name="kruskals_algorithm">Kruskal\'s algorithm</string>
+    <string name="dijkstras_algorithm">Dijkstra\'s algorithm</string>
+
+    <string name="show_help">Help</string>
+</resources>

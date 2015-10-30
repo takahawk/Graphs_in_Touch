@@ -1,0 +1,13 @@
+<resources>
+    <string name="action_settings">Настройки</string>
+    <string name="save_to_file">Сохранить в файл</string>
+    <string name="load_from_file">Загрузить из файла</string>
+    <string name="perform_algorithm">Применить алгоритм</string>
+
+    <string name="dfs_algorithm">Поиск в глубину</string>
+    <string name="prims_algorithm">Алгоритм Прима</string>
+    <string name="kruskals_algorithm">Алгоритм Краскала</string>
+    <string name="dijkstras_algorithm">Алгоритм Дейкстры</string>
+
+    <string name="show_help">Помощь</string>
+</resources>
