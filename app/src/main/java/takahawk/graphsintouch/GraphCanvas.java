@@ -7,7 +7,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
 
+import takahawk.graphsintouch.view.Edge;
 import takahawk.graphsintouch.view.GraphView;
+import takahawk.graphsintouch.view.Node;
 
 /**
  * Android View for drawing the graph
@@ -53,7 +55,7 @@ public class GraphCanvas
     @Override
     protected void onDraw(Canvas canvas) {
 
-        for (GraphView.Node node : graphView.getNodes()) {
+        for (Node node : graphView.getNodes()) {
 
             rect.set(node.x() - BASE_NODE_RADIUS,
                     node.y() - BASE_NODE_RADIUS,
@@ -67,7 +69,7 @@ public class GraphCanvas
             }
         }
 
-        for (GraphView.Edge edge : graphView.getEdges()) {
+        for (Edge edge : graphView.getEdges()) {
             canvas.drawLine(edge.x1(), edge.y1(), edge.x2(), edge.y2(), edgePaint);
         }
     }

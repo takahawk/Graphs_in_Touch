@@ -1,6 +1,7 @@
 package takahawk.graphsintouch;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +10,10 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import java.util.concurrent.TimeUnit;
 
 import takahawk.graphsintouch.controller.GraphController;
 import takahawk.graphsintouch.view.GraphView;
@@ -34,11 +38,20 @@ public class GraphActivity
     private int dragX;
     private int dragY;
 
+    // icons
+    private ImageView undoIcon;
+    private ImageView redoIcon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+
+        // icons
+        undoIcon = (ImageView) findViewById(R.id.undo_icon);
+        redoIcon = (ImageView) findViewById(R.id.redo_icon);
+
         algorithmLayout = (LinearLayout) findViewById(R.id.algorithm_layout);
         graphLayout = (FrameLayout) findViewById(R.id.graph_layout);
         GraphView graphView = new GraphView(GraphCanvas.BASE_NODE_RADIUS, true);
@@ -160,6 +173,18 @@ public class GraphActivity
         }
     }
 
+    public void undoClick(View view) {
+        controller.undo();
+        new BlinkTask(view).execute();
+        canvas.invalidate();
+    }
+
+    public void redoClick(View view) {
+        controller.redo();
+        new BlinkTask(view).execute();
+        canvas.invalidate();
+    }
+
     public void switchAddNodeMode(View view){
         if (mode == Mode.ADD_NODE) {
             mode = Mode.NORMAL;
@@ -167,6 +192,34 @@ public class GraphActivity
         } else {
             mode = Mode.ADD_NODE;
             view.setBackgroundColor(Color.BLUE);
+        }
+    }
+
+    class BlinkTask
+        extends AsyncTask<Void, Void, Void> {
+        View blinkingView;
+
+        public BlinkTask(View blinkingView) {
+            this.blinkingView = blinkingView;
+        }
+        @Override
+        protected void onPreExecute() {
+            blinkingView.setBackgroundColor(Color.BLUE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            blinkingView.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 

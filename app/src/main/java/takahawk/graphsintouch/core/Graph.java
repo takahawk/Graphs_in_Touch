@@ -119,13 +119,25 @@ public class Graph {
         return false;
     }
 
+    /**
+     * Return true if graph has a vertex with given number
+     * @param number number of vertex
+     * @return true - if vertex exists, false - otherwise
+     */
+    public boolean hasVertex(int number) {
+        return adjInList.containsKey(number);
+    }
+
 
     /**
      * Returns max number of vertex
      * @return max number of vertex
      */
     public int maxNumber() {
-        return Collections.max(adjInList.keySet());
+        if (adjInList.size() != 0)
+            return Collections.max(adjInList.keySet());
+        else
+            return 0;
     }
 
     /**

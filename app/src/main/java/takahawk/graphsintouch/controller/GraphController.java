@@ -1,7 +1,11 @@
 package takahawk.graphsintouch.controller;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import takahawk.graphsintouch.core.Graph;
 import takahawk.graphsintouch.view.GraphView;
+import takahawk.graphsintouch.view.Node;
 
 /**
  * Controller class for manipulating platform-independent view and model.
@@ -11,17 +15,44 @@ public class GraphController {
 
     private GraphView.Control control;
     private Graph graph = new Graph();
-    private GraphView.Node selectedNode;
+    private Node selectedNode;
+    private Deque<Operation> undoDeque = new ArrayDeque<Operation>();
+    private Deque<Operation> redoDeque = new ArrayDeque<Operation>();
 
     public GraphController(GraphView.Control control) {
         this.control = control;
     }
 
     /**
+     * Undo the last operation
+     * @return true - if operation undone, false - if operation stack is empty
+     */
+    public boolean undo() {
+        if (undoDeque.isEmpty())
+            return false;
+        Operation operation = undoDeque.pop();
+        operation.undo();
+        redoDeque.push(operation);
+        return true;
+    }
+
+    /**
+     * Redo the last undone operation
+     * @return true - if operation redone, false - if operation stack is empty
+     */
+    public boolean redo() {
+        if (redoDeque.isEmpty())
+            return false;
+        Operation operation = redoDeque.pop();
+        operation.apply();
+        undoDeque.push(operation);
+        return true;
+    }
+    /**
      * Select the node and give it focus
      * @param node node to be selected
      */
-    public void selectNode(GraphView.Node node) {
+    public void selectNode(Node node) {
         if (selectedNode != null) {
             selectedNode.focused = false;
             selectedNode = node;
@@ -49,8 +80,8 @@ public class GraphController {
 
     }
 
-    private GraphView.Node getNode(float x, float y) {
-        for (GraphView.Node node : control.nodes()) {
+    private Node getNode(float x, float y) {
+        for (Node node : control.nodes()) {
             if (    Math.abs(node.x() - x) < control.radius &&
                     Math.abs(node.y() - y) < control.radius)
                 return node;
@@ -74,8 +105,8 @@ public class GraphController {
      * @return true - if new node added, false - if node with specified number exists
      */
     public boolean addNode(int number, float x, float y) {
-        if (graph.addVertex(number)) {
-            selectNode(control.addNode(number, x, y));
+        if (!graph.hasVertex(number)) {
+            undoDeque.push(new AddNode(x, y, number));
             return true;
         }
         return false;
@@ -87,7 +118,12 @@ public class GraphController {
      * @param dY vertical movement distance
      */
     public void moveNode(float dX, float dY) {
-        selectedNode.move(dX, dY);
+        if (undoDeque.peek() instanceof MoveNode && ((MoveNode) undoDeque.peek()).node == selectedNode) {
+            ((MoveNode) undoDeque.peek()).add(dX, dY);
+            selectedNode.move(dX, dY);
+        }
+        else
+            undoDeque.push(new MoveNode(dX, dY));
     }
 
     /**
@@ -97,13 +133,18 @@ public class GraphController {
      */
     public void addNode(float x, float y) {
         int number = graph.maxNumber() + 1;
-        graph.addVertex(number);
-        selectNode(control.addNode(number, x, y));
+        undoDeque.push(new AddNode(x, y, number));
     }
 
+    /**
+     * Remove selected node
+     */
     public void removeNode() {
-        control.removeNode(selectedNode);
-        selectedNode = null;
+        if (selectedNode != null) {
+            graph.removeVertex(selectedNode.number());
+            control.removeNode(selectedNode);
+            selectedNode = null;
+        }
     }
 
     /**
@@ -112,7 +153,7 @@ public class GraphController {
      * @param in_y inbound node vertical coorditante
      */
     public void addEdge(float in_x, float in_y) {
-        GraphView.Node in = getNode(in_x, in_y);
+        Node in = getNode(in_x, in_y);
         if (in != null)
             if (graph.addEdge(selectedNode.number(), in.number())) {
                 control.addEdge(selectedNode, in);
@@ -120,4 +161,63 @@ public class GraphController {
     }
 
 
+
+
+    public interface Operation {
+        void apply();
+        void undo();
+    }
+
+    class AddNode
+        implements Operation {
+        Node node;
+
+        public AddNode(float x, float y, int nodeNumber) {
+            node = new Node(x, y, control.radius, nodeNumber);
+            apply();
+        }
+
+        @Override
+        public void apply() {
+            graph.addVertex(node.number());
+            control.addNode(node);
+            selectNode(node);
+        }
+
+        @Override
+        public void undo() {
+            selectedNode = null;
+            node.focused = false;
+            graph.removeVertex(node.number());
+            control.removeNode(node);
+        }
+    }
+
+    class MoveNode
+        implements Operation {
+        Node node;
+        float dX;
+        float dY;
+
+        public MoveNode(float dX, float dY) {
+            node = selectedNode;
+            this.dX = dX;
+            this.dY = dY;
+            apply();
+        }
+
+        public void add(float dX, float dY) {
+            this.dX += dX;
+            this.dY += dY;
+        }
+        @Override
+        public void apply() {
+            node.move(dX, dY);
+        }
+
+        @Override
+        public void undo() {
+            node.move(-dX, -dY);
+        }
+    }
 }
