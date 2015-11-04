@@ -4,6 +4,7 @@
     <string name="save_to_file">Save to File</string>
     <string name="load_from_file">Load from File</string>
     <string name="perform_algorithm">Perform algorithm</string>
+    <string name="switch_directed_undirected_item">Switch directed/undirected</string>
 
     <string name="dfs_algorithm">Depth-First Search</string>
     <string name="prims_algorithm">Prim\'s algorithm</string>
@@ -11,4 +12,25 @@
     <string name="dijkstras_algorithm">Dijkstra\'s algorithm</string>
 
     <string name="show_help">Help</string>
+
+    <string name="add_node_mode_enter">Tap on free space to add new node</string>
+    <string name="node_added">You added node number %1$d </string>
+    <string name="node_adding_undone">Adding of node %1$d is undone</string>
+    <string name="snackbar_undo">UNDO</string>
+
+    <string name="add_edge_mode_enter">To add edge tap on outbound node than drag line to inbound node</string>
+    <string name="edge_added">You added edge between nodes %1$d and %2$d</string>
+    <string name="edge_adding_undone">Adding of edge between nodes %1$d and %2$d is undone</string>
+
+    <string name="remove_mode_enter">Tap on vertex or edge to remove it</string>
+
+    <string name="dijkstra_mode_enter">Specify outbound vertex</string>
+    <string name="dijkstra_mode_continue">Specify inbound vertex</string>
+    <string name="dijkstra_applying">Dijkstra\'s algorithm is applying... %1$d </string>
+    <string name="dijkstra_done">Shortest path: %1$d </string>
+    <string name="dijkstra_failure">Path doesn\'t exist</string>
+    <string name="prim_done">Maximum spanning tree: %1$d </string>
+    <string name="kruskal_done">Minimum spanning tree: %1$d </string>
+    <string name="kruskal_failure">Kruskal\'s algorithm working for undirected graphs only</string>
+    <string name="prim_failure">Prim\'s algorithm working for undirected graphs only</string>
 </resources>

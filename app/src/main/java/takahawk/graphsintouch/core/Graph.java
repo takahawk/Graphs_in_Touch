@@ -27,6 +27,12 @@ public class Graph {
         this.directed = directed;
     }
 
+    public boolean isDirected() {
+        return directed;
+    }
+
+    public void setDirected(boolean directed) { this.directed = directed; }
+
     public class Edge {
         private int in;
         private int out;
@@ -42,6 +48,17 @@ public class Graph {
             this.weight = weight;
         }
 
+    }
+
+    public int vertexCount() {
+        return adjInList.size();
+    }
+
+    public int edgeCount() {
+        int count = 0;
+        for (Integer key : adjInList.keySet())
+            count += adjInList.get(key).size();
+        return count;
     }
 
     /**
@@ -250,6 +267,14 @@ public class Graph {
                     result.put(edge.in, vertex);
                     stack.push(edge.in);
                 }
+                if (!directed) {
+                    for (Edge edge : adjInList.get(vertex)) {
+                        if (!result.containsKey(edge.out)) {
+                            result.put(edge.out, vertex);
+                            stack.push(edge.out);
+                        }
+                    }
+                }
             }
         }
         return result;
@@ -303,36 +328,42 @@ public class Graph {
         Map<Integer, Integer> tree = new HashMap<>();
         List<Edge> edges = new ArrayList<>();
         Set<Integer> labeled = new HashSet<>();
-        Integer first = adjInList.keySet().iterator().next();
-        labeled.add(first);
-        edges.addAll(adjOutList.get(first));
-        edges.addAll(adjInList.get(first));
-        while (!edges.isEmpty()) {
-            Collections.sort(edges, new Comparator<Edge>() {
-                        @Override
-                        public int compare(Edge o1, Edge o2) {
-                            return o1.weight - o2.weight;
+        Iterator<Integer> vertexIt = adjInList.keySet().iterator();
+        while (vertexIt.hasNext()) {
+            int vertex = vertexIt.next();
+            if (labeled.contains(vertex))
+                continue;
+            labeled.add(vertex);
+            edges.addAll(adjOutList.get(vertex));
+            edges.addAll(adjInList.get(vertex));
+
+            while (!edges.isEmpty()) {
+                Collections.sort(edges, new Comparator<Edge>() {
+                            @Override
+                            public int compare(Edge o1, Edge o2) {
+                                return o2.weight - o1.weight;
+                            }
                         }
-                    }
                 );
-            Iterator<Edge> it = edges.iterator();
-            while (it.hasNext()) {
-                Edge edge = it.next();
-                if (!labeled.contains(edge.in)) {
-                    labeled.add(edge.in);
-                    edges.addAll(adjOutList.get(edge.in));
-                    edges.addAll(adjInList.get(edge.in));
-                    tree.put(edge.in, edge.out);
-                    break;
+                Iterator<Edge> it = edges.iterator();
+                while (it.hasNext()) {
+                    Edge edge = it.next();
+                    if (!labeled.contains(edge.in)) {
+                        labeled.add(edge.in);
+                        edges.addAll(adjOutList.get(edge.in));
+                        edges.addAll(adjInList.get(edge.in));
+                        tree.put(edge.in, edge.out);
+                        break;
+                    }
+                    if (!labeled.contains(edge.out)) {
+                        labeled.add(edge.out);
+                        edges.addAll(adjOutList.get(edge.out));
+                        edges.addAll(adjInList.get(edge.out));
+                        tree.put(edge.out, edge.in);
+                        break;
+                    }
+                    it.remove();
                 }
-                if (!labeled.contains(edge.out)) {
-                    labeled.add(edge.out);
-                    edges.addAll(adjOutList.get(edge.out));
-                    edges.addAll(adjInList.get(edge.out));
-                    tree.put(edge.out, edge.in);
-                    break;
-                }
-                it.remove();
             }
         }
         return tree;

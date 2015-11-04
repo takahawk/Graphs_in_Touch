@@ -3,6 +3,7 @@
     <string name="save_to_file">Сохранить в файл</string>
     <string name="load_from_file">Загрузить из файла</string>
     <string name="perform_algorithm">Применить алгоритм</string>
+    <string name="switch_directed_undirected_item">Переключить ориентированность/неориентированность</string>
 
     <string name="dfs_algorithm">Поиск в глубину</string>
     <string name="prims_algorithm">Алгоритм Прима</string>
@@ -10,4 +11,18 @@
     <string name="dijkstras_algorithm">Алгоритм Дейкстры</string>
 
     <string name="show_help">Помощь</string>
+
+    <string name="add_node_mode_enter">Кликните на свободном месте, чтобы создать новую вершину</string>
+    <string name="node_added">Вы добавили вершину номер %1$d </string>
+    <string name="node_adding_undone">Добавление вершины %1$d отменено</string>
+    <string name="snackbar_undo">ОТМЕНИТЬ</string>
+
+    <string name="add_edge_mode_enter">Чтобы добавить ребро кликните на исходящую вершину и протяните линию до входящей </string>
+    <string name="edge_added">Вы добавили новое ребро между вершинами %1$d и %2$d</string>
+    <string name="edge_adding_undone">Добавление ребра между вершинами %1$d и %2$d отменено</string>
+
+    <string name="remove_mode_enter">Кликните на ребре или вершине для удаления</string>
+
+    <string name="dijkstra_mode_enter">Укажите исходящую вершину</string>
+    <string name="dijkstra_mode_continue">Укажите входящую вершину</string>
 </resources>
