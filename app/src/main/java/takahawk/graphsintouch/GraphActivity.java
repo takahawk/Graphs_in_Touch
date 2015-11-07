@@ -69,6 +69,8 @@ public class GraphActivity
 
     private boolean algorithmPerformed = false;
 
+    private AsyncTask asyncTask;
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         GraphController.DataBundle bundle = controller.getAllData();
@@ -217,6 +219,13 @@ public class GraphActivity
         mainLayout.getLocationOnScreen(coord);
         canvasX += coord[0];
         canvasY += coord[1];
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (asyncTask != null && asyncTask.getStatus() != AsyncTask.Status.FINISHED)
+            asyncTask.cancel(true);
     }
 
     @Override
@@ -377,7 +386,7 @@ public class GraphActivity
                 if (controller.nodeSelected()) {
                     if (controller.checkForNode(x, y)) {
                         permanentSnackbar.setText(getResources().getString(R.string.dijkstra_applying));
-                        new AsyncTask<Void, Integer, Integer>() {
+                        asyncTask = new AsyncTask<Void, Integer, Integer>() {
                             @Override
                             public Integer doInBackground(Void... params) {
 
@@ -395,7 +404,8 @@ public class GraphActivity
                                 canvas.invalidate();
                             }
 
-                        }.execute();
+                        };
+                        asyncTask.execute();
 
                     }
                 } else {
@@ -597,7 +607,7 @@ public class GraphActivity
         } else {
             clearAlgorithms();
             if (controller.nodeSelected()) {
-                new DFS().execute();
+                asyncTask = new DFS().execute();
             }
 
             // permanentSnackbar.show();
@@ -640,7 +650,7 @@ public class GraphActivity
     public void performPrim(View view) {
         blink(view);
         drawerLayout.closeDrawers();
-        new AsyncTask<Void, Void, Integer>() {
+        asyncTask = new AsyncTask<Void, Void, Integer>() {
 
             @Override
             public Integer doInBackground(Void... params) {
@@ -656,13 +666,14 @@ public class GraphActivity
                     permanentSnackbar.setText(getResources().getString(R.string.prim_done, result));
                 permanentSnackbar.show();
             }
-        }.execute();
+        };
+        asyncTask.execute();
     }
 
     public void performKruskal(View view) {
         blink(view);
         drawerLayout.closeDrawers();
-        new AsyncTask<Void, Void, Integer>() {
+        asyncTask = new AsyncTask<Void, Void, Integer>() {
 
             @Override
             public Integer doInBackground(Void... params) {
@@ -678,7 +689,8 @@ public class GraphActivity
                     permanentSnackbar.setText(getResources().getString(R.string.kruskal_done, result));
                 permanentSnackbar.show();
             }
-        }.execute();
+        };
+        asyncTask.execute();
     }
 
     public void switchDirectedUndirected(View view) {
