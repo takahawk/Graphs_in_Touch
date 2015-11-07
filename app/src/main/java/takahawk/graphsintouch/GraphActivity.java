@@ -1,5 +1,6 @@
 package takahawk.graphsintouch;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
