@@ -685,7 +685,7 @@ public class GraphController {
         public void apply() {
             if (result == null) {
                 result = new ArrayList<Edge>();
-                Map<Integer, Integer> res = graph.minTreeKruskal();
+                Map<Integer, Integer> res = Algorithms.minTreeKruskal(graph);
                 for (Map.Entry<Integer, Integer> entry : res.entrySet()) {
                     for (Edge edge : control.edges()) {
                         if (entry.getKey() == edge.in.number() && entry.getValue() == edge.out.number())

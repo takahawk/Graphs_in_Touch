@@ -72,7 +72,7 @@ public class GraphActivity
 
     private boolean algorithmPerformed = false;
 
-    private AsyncTask asyncTask;
+    private AsyncTask<Void, Void, Integer> asyncTask;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -401,7 +401,7 @@ public class GraphActivity
                 if (controller.nodeSelected()) {
                     if (controller.checkForNode(x, y)) {
                         permanentSnackbar.setText(getResources().getString(R.string.dijkstra_applying));
-                        asyncTask = new AsyncTask<Void, Integer, Integer>() {
+                        asyncTask = new AsyncTask<Void, Void, Integer>() {
                             @Override
                             public Integer doInBackground(Void... params) {
 
@@ -648,16 +648,16 @@ public class GraphActivity
     }
 
     private class DFS
-        extends AsyncTask<Void, Void, Void> {
+        extends AsyncTask<Void, Void, Integer> {
 
         @Override
-        public Void doInBackground(Void... params) {
+        public Integer doInBackground(Void... params) {
             controller.performDFS();
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Integer integer) {
             canvas.invalidate();
         }
     }

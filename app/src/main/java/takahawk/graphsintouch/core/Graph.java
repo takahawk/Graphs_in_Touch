@@ -50,15 +50,31 @@ public class Graph {
 
     }
 
+    /**
+     * Return count of vertexes
+     * @return count of vertexes
+     */
     public int vertexCount() {
         return adjInList.size();
     }
 
+    /**
+     * Returns count of edges
+     * @return count of edges
+     */
     public int edgeCount() {
         int count = 0;
         for (Integer key : adjInList.keySet())
             count += adjInList.get(key).size();
         return count;
+    }
+
+    /**
+     * Returns set of all numbers of vertexes
+     * @return set of all numbers of vertexes
+     */
+    public Set<Integer> vertexes() {
+        return adjInList.keySet();
     }
 
     /**
@@ -290,46 +306,6 @@ public class Graph {
         if (EdgeByNumber(out, in) != null)
             return true;
         return false;
-    }
-
-
-
-    /**
-     * Returns minimum spanning tree. Method uses Kruskal's algorithm for this purpose. Working only for undirected graph
-     * @return map represents branches of minimum-spanning-tree (key - child, value - parent)
-     */
-    public Map<Integer, Integer> minTreeKruskal() {
-        if (directed)
-            throw new UnsupportedOperationException("Kruscal's algorithm works only for undirected graphs");
-        Map<Integer, Integer> tree = new HashMap<>();
-        // get all edges via iterator
-        List<Edge> edges = new ArrayList<>();
-        for (Edge edge : edges())
-            edges.add(edge);
-        // sort edges by weight
-        Collections.sort(edges, new Comparator<Edge>() {
-                    @Override
-                    public int compare(Edge o1, Edge o2) {
-                        return o1.weight - o2.weight;
-                    }
-                }
-        );
-
-        // for algorithm we use disjoint set forest data structure (a.k.a. union-find, merge-find etc. see wikipedia)
-        DisjointSetForest<Integer> set = new DisjointSetForest<>();
-        for (Integer number : adjOutList.keySet())
-            set.makeSet(number);
-        // adding edges to tree, while it can't be possible to add edge that don't creates a cycle
-        for (Edge edge : edges) {
-            if (set.find(edge.in) != set.find(edge.out)) {
-                if (!tree.containsKey(edge.in))
-                    tree.put(edge.in, edge.out);
-                else
-                    tree.put(edge.out, edge.in);
-                set.union(edge.in, edge.out);
-            }
-        }
-        return tree;
     }
 
     /**
