@@ -116,14 +116,8 @@ public class GraphActivity
         }
 
         // icons
-        addNodeIcon = (ImageView) findViewById(R.id.add_node_icon);
-        addEdgeIcon = (ImageView) findViewById(R.id.add_edge_icon);
-        deleteIcon = (ImageView) findViewById(R.id.delete_icon);
-        undoIcon = (ImageView) findViewById(R.id.undo_icon);
-        redoIcon = (ImageView) findViewById(R.id.redo_icon);
-
-        dijkstraMenuItem = (TextView) findViewById(R.id.dijkstra_item);
-        dfsMenuItem = (TextView) findViewById(R.id.dfs_item);
+        initIcons();
+        initMenuItems();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbarLayout = (LinearLayout)  findViewById(R.id.toolbarLayout);
@@ -131,10 +125,31 @@ public class GraphActivity
         algorithmLayout = (LinearLayout) findViewById(R.id.algorithm_layout);
         graphLayout = (FrameLayout) findViewById(R.id.graph_layout);
 
-        // controller.addEdge(40, 600);
-        controller.remove(40, 450);
         canvas = new GraphCanvas(this, graphView);
         canvas.setOnTouchListener(this);
+
+
+        graphLayout.addView(canvas);
+        permanentSnackbar = Snackbar.make(graphLayout, "", Snackbar.LENGTH_INDEFINITE);
+
+        scaleDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                float scaleFactor = detector.getScaleFactor();
+                canvas.setScale(canvas.getScaleX() * scaleFactor, canvas.getScaleY() * scaleFactor);
+                canvas.invalidate();
+                return true;
+            }
+        });
+    }
+
+    private void initIcons() {
+        addNodeIcon = (ImageView) findViewById(R.id.add_node_icon);
+        addEdgeIcon = (ImageView) findViewById(R.id.add_edge_icon);
+        deleteIcon = (ImageView) findViewById(R.id.delete_icon);
+        undoIcon = (ImageView) findViewById(R.id.undo_icon);
+        redoIcon = (ImageView) findViewById(R.id.redo_icon);
+
         addNodeIcon.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -187,6 +202,12 @@ public class GraphActivity
                 return true;
             }
         });
+    }
+    private void initMenuItems() {
+
+        dijkstraMenuItem = (TextView) findViewById(R.id.dijkstra_item);
+        dfsMenuItem = (TextView) findViewById(R.id.dfs_item);
+
         dijkstraMenuItem.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -213,26 +234,6 @@ public class GraphActivity
                 return true;
             }
         });
-        graphLayout.addView(canvas);
-        permanentSnackbar = Snackbar.make(graphLayout, "", Snackbar.LENGTH_INDEFINITE);
-
-        scaleDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            @Override
-            public boolean onScale(ScaleGestureDetector detector) {
-                float scaleFactor = detector.getScaleFactor();
-                canvas.setScale(canvas.getScaleX() * scaleFactor, canvas.getScaleY() * scaleFactor);
-                canvas.invalidate();
-                return true;
-            }
-        });
-        int[] coord = new int[2];
-        canvas.getLocationOnScreen(coord);
-        canvasX = coord[0];
-        canvasY = coord[1];
-        mainLayout.getLocationOnScreen(coord);
-        canvasX += coord[0];
-        canvasY += coord[1];
-
 
     }
 
