@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,6 +103,59 @@ public class Algorithms {
                 else
                     tree.put(edge.getOut(), edge.getIn());
                 set.union(edge.getIn(), edge.getOut());
+            }
+        }
+        return tree;
+    }
+
+    /**
+     * Returns maximum spanning tree. Method uses Prim's algorithm for this purpose. Working only for undirected graph
+     * @return map represents branches of maximum-spanning-tree (key - child, value - parent)
+     */
+    public static Map<Integer, Integer> maxTreePrim(Graph graph) {
+        if (graph.isDirected())
+            throw new UnsupportedOperationException("Prim's algorithm works only for undirected graphs");
+        Map<Integer, Integer> tree = new HashMap<>();
+        List<Graph.Edge> edges = new ArrayList<>();
+        Set<Integer> labeled = new HashSet<>();
+        Iterator<Integer> vertexIt = graph.vertexes().iterator();
+        // continue while there are vertexes to add
+        while (vertexIt.hasNext()) {
+            int vertex = vertexIt.next();
+            // if vertex is labeled - skip it
+            if (labeled.contains(vertex))
+                continue;
+            labeled.add(vertex);
+            // Add to list all edges adjacent to vertex
+            edges.addAll(graph.getAdjacentEdges(vertex));
+            // While we have edges to add
+            while (!edges.isEmpty()) {
+
+                // sort all edges by weight
+                Collections.sort(edges, new Comparator<Graph.Edge>() {
+                            @Override
+                            public int compare(Graph.Edge o1, Graph.Edge o2) {
+                                return o2.getWeight() - o1.getWeight();
+                            }
+                        }
+                );
+                Iterator<Graph.Edge> it = edges.iterator();
+                while (it.hasNext()) {
+                    Graph.Edge edge = it.next();
+                    if (!labeled.contains(edge.getIn())) {
+                        labeled.add(edge.getIn());
+                        edges.addAll(graph.getAdjacentEdges(edge.getIn()));
+                        tree.put(edge.getIn(), edge.getOut());
+                        break;
+                    }
+                    if (!labeled.contains(edge.getOut())) {
+                        labeled.add(edge.getOut());
+                        edges.addAll(graph.getAdjacentEdges(edge.getOut()));
+                        tree.put(edge.getOut(), edge.getIn());
+                        break;
+                    }
+                    it.remove();
+                }
             }
         }
         return tree;

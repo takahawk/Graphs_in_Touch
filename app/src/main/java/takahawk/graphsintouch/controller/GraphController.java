@@ -654,7 +654,7 @@ public class GraphController {
         public void apply() {
             if (result == null) {
                 result = new ArrayList<Edge>();
-                Map<Integer, Integer> res = graph.maxTreePrim();
+                Map<Integer, Integer> res = Algorithms.maxTreePrim(graph);
                 for (Map.Entry<Integer, Integer> entry : res.entrySet()) {
                     for (Edge edge : control.edges()) {
                         if (entry.getKey() == edge.out.number() && entry.getValue() == edge.in.number())

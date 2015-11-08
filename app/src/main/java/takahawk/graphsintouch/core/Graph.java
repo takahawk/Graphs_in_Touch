@@ -78,6 +78,36 @@ public class Graph {
     }
 
     /**
+     * Return all edges adjacent to vertex
+     * NOTE: result depends on directed graph or undirected
+     * @param vertex vertex
+     * @return list with all adjacent edges
+     */
+    public List<Edge> getAdjacentEdges(int vertex) {
+        List<Edge> result = new ArrayList<>();
+        result.addAll(adjOutList.get(vertex));
+        if (!directed)
+            result.addAll(adjInList.get(vertex));
+        return result;
+    }
+    /**
+     * Returns list of all edges
+     * @return list of all edges
+     */
+    public List<Edge> getAllEdges() {
+        List<Edge> result = new ArrayList<>();
+        for (List<Edge> edges : adjOutList.values()) {
+            result.addAll(edges);
+        }
+        if (!directed)
+            for (List<Edge> edges : adjInList.values()) {
+                result.addAll(edges);
+            }
+        return result;
+    }
+
+
+    /**
      * Iterates through edges
      * @return iterable object that iterates through all graph edges
      */
@@ -308,56 +338,7 @@ public class Graph {
         return false;
     }
 
-    /**
-     * Returns maximum spanning tree. Method uses Prim's algorithm for this purpose. Working only for undirected graph
-     * @return map represents branches of maximum-spanning-tree (key - child, value - parent)
-     */
-    public Map<Integer, Integer> maxTreePrim() {
-        if (directed)
-            throw new UnsupportedOperationException("Prim's algorithm works only for undirected graphs");
-        Map<Integer, Integer> tree = new HashMap<>();
-        List<Edge> edges = new ArrayList<>();
-        Set<Integer> labeled = new HashSet<>();
-        Iterator<Integer> vertexIt = adjInList.keySet().iterator();
-        while (vertexIt.hasNext()) {
-            int vertex = vertexIt.next();
-            if (labeled.contains(vertex))
-                continue;
-            labeled.add(vertex);
-            edges.addAll(adjOutList.get(vertex));
-            edges.addAll(adjInList.get(vertex));
 
-            while (!edges.isEmpty()) {
-                Collections.sort(edges, new Comparator<Edge>() {
-                            @Override
-                            public int compare(Edge o1, Edge o2) {
-                                return o2.weight - o1.weight;
-                            }
-                        }
-                );
-                Iterator<Edge> it = edges.iterator();
-                while (it.hasNext()) {
-                    Edge edge = it.next();
-                    if (!labeled.contains(edge.in)) {
-                        labeled.add(edge.in);
-                        edges.addAll(adjOutList.get(edge.in));
-                        edges.addAll(adjInList.get(edge.in));
-                        tree.put(edge.in, edge.out);
-                        break;
-                    }
-                    if (!labeled.contains(edge.out)) {
-                        labeled.add(edge.out);
-                        edges.addAll(adjOutList.get(edge.out));
-                        edges.addAll(adjInList.get(edge.out));
-                        tree.put(edge.out, edge.in);
-                        break;
-                    }
-                    it.remove();
-                }
-            }
-        }
-        return tree;
-    }
 
     /**
      * Returns list of node numbers that represents the shortest path from source to destination. Used Dijkstra algorithm
