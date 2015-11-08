@@ -1,5 +1,6 @@
 package takahawk.graphsintouch.core;
 
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -15,29 +16,49 @@ import java.util.Set;
  */
 public class Algorithms {
 
+    public static class VertexPair {
+
+        private int _parent;
+        private int _child;
+
+        public int parent() {
+            return _parent;
+        }
+
+        public int child() {
+            return _child;
+        }
+
+        public VertexPair(int parent, int child) {
+            this._parent = parent;
+            this._child = child;
+        }
+
+
+    }
     /**
      * Performs depth first search from a giver initial vertex and returns resulting tree
      * @param graph graph to which algorithm will be apllied
      * @param initVertex initial vertex
      * @return map represents branches of dfs-tree (key - child, value - parent)
      */
-    public static List<Graph.Edge> depthFirstSearch(Graph graph, int initVertex) {
-        List<Graph.Edge> result = new ArrayList<Graph.Edge>();
-        // Map<Integer, Integer> result = new HashMap<>();
-        Deque<Integer> stack = new ArrayDeque<>();
+    public static List<VertexPair> depthFirstSearch(Graph graph, int initVertex) {
+        List<VertexPair> result = new ArrayList<>();
+        Deque<VertexPair> stack = new ArrayDeque<>();
         Set<Integer> discovered = new HashSet<>();
-        stack.push(initVertex);
+        stack.push(new VertexPair(initVertex, initVertex));
         while (!stack.isEmpty()) {
-            int vertex = stack.pop();
-            if (!discovered.contains(vertex)) {
-                discovered.add(vertex);
+           VertexPair pair = stack.pop();
+            if (!discovered.contains(pair._child)) {
+                discovered.add(pair._child);
+                result.add(pair);
 
+                int vertex = pair._child;
                 for (Graph.Edge edge : graph.edges(vertex)) {
-                    result.add(edge);
-                    if (edge.getIn() != vertex)
-                        stack.push(edge.getIn());
-                    else
-                        stack.push(edge.getOut());
+                    int adjacentVertex = (vertex != edge.getIn()) ? edge.getIn() : edge.getOut();
+                    if (!discovered.contains(adjacentVertex)) {
+                        stack.push(new VertexPair(vertex, adjacentVertex));
+                    }
                 }
             }
         }

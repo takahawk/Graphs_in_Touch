@@ -627,10 +627,10 @@ public class GraphController {
         public void apply() {
             if (result == null) {
                 result = new ArrayList<Edge>();
-                List<Graph.Edge> res = Algorithms.depthFirstSearch(graph, out.number());
-                for (Graph.Edge edge : res) {
-                    result.add(new Edge(getNodeByNumber(edge.getOut()),
-                                        getNodeByNumber(edge.getIn()), 0));
+                List<Algorithms.VertexPair> res = Algorithms.depthFirstSearch(graph, out.number());
+                for (Algorithms.VertexPair pair : res) {
+                    result.add(new Edge(getNodeByNumber(pair.parent()),
+                                        getNodeByNumber(pair.child()), 0));
                 }
             }
             control.setMarkers(result);
