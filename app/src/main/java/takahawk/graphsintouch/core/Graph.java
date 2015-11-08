@@ -103,6 +103,49 @@ public class Graph {
     }
 
     /**
+     * Iterates through edges adjacent to one vertex
+     * NOTE: results depends on directed graph or undirected
+     * @param outbound outbound vertex
+     * @return iterable object for iterating through all edges adjacent to specified vertex
+     */
+    public Iterable<Graph.Edge> edges(final int outbound) {
+        return new Iterable<Edge>() {
+            @Override
+            public Iterator<Edge> iterator() {
+                return new Iterator<Edge>() {
+                    boolean iterateInbound = !directed;
+                    Iterator<Graph.Edge> iterator = adjOutList.get(outbound).iterator();
+                    List<Edge> list = new ArrayList<>();
+                    int listIndex = -1;
+                    @Override
+                    public boolean hasNext() {
+                        if (!iterator.hasNext()) {
+                            if (iterateInbound) {
+                                iterator = adjInList.get(outbound).iterator();
+                                iterateInbound = false;
+                                return hasNext();
+                            } else {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    public Edge next() {
+                        return iterator.next();
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
+
+    /**
      * Returns edge reference for a given vertex numbers
      * @param out outbound vertex number
      * @param in inbound vertex number
@@ -249,36 +292,7 @@ public class Graph {
         return false;
     }
 
-    /**
-     * Performs depth first search from a giver initial vertex and returns resulting tree
-     * @param initVertex initial vertex
-     * @return map represents branches of dfs-tree (key - child, value - parent)
-     */
-    public Map<Integer, Integer> depthFirstSearch(int initVertex) {
-        Map<Integer, Integer> result = new HashMap<>();
-        Deque<Integer> stack = new ArrayDeque<>();
-        Set<Integer> discovered = new HashSet<>();
-        stack.push(initVertex);
-        while (!stack.isEmpty()) {
-            int vertex = stack.pop();
-            if (!discovered.contains(vertex)) {
-                discovered.add(vertex);
-                for (Edge edge : adjOutList.get(vertex)) {
-                    result.put(edge.in, vertex);
-                    stack.push(edge.in);
-                }
-                if (!directed) {
-                    for (Edge edge : adjInList.get(vertex)) {
-                        if (!result.containsKey(edge.out)) {
-                            result.put(edge.out, vertex);
-                            stack.push(edge.out);
-                        }
-                    }
-                }
-            }
-        }
-        return result;
-    }
+
 
     /**
      * Returns minimum spanning tree. Method uses Kruskal's algorithm for this purpose. Working only for undirected graph

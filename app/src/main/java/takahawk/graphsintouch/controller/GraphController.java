@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
+import takahawk.graphsintouch.core.Algorithms;
 import takahawk.graphsintouch.core.Graph;
 import takahawk.graphsintouch.view.Edge;
 import takahawk.graphsintouch.view.GraphView;
@@ -152,6 +153,12 @@ public class GraphController {
         return result;
     }
 
+    /**
+     * Get node if coordinates points in 2-times radius field of it
+     * @param x horizontal coordinate
+     * @param y vertical coordinate
+     * @return node reference or null if nothing placed on specified coordinates
+     */
     private Node getExtendedRadiusNode(float x, float y) {
         Node result = null;
         for (Node node : control.nodes()) {
@@ -163,6 +170,14 @@ public class GraphController {
             }
         }
         return result;
+    }
+
+    private Node getNodeByNumber(int number) {
+        for (Node node : control.nodes()) {
+            if (node.number() == number)
+                return node;
+        }
+        return null;
     }
 
     /**
@@ -233,6 +248,11 @@ public class GraphController {
         }
     }
 
+    /**
+     * Remove element at specified position or do nothing if there are nothing
+     * @param x horizontal coordinate
+     * @param y vertical coordinate
+     */
     public void remove(float x, float y) {
         Node node = getNode(x, y);
         if (node != null) {
@@ -607,15 +627,10 @@ public class GraphController {
         public void apply() {
             if (result == null) {
                 result = new ArrayList<Edge>();
-                Map<Integer, Integer> res = graph.depthFirstSearch(out.number());
-                for (Map.Entry<Integer, Integer> entry : res.entrySet()) {
-                    for (Edge edge : control.edges()) {
-                        if (entry.getKey() == edge.out.number() && entry.getValue() == edge.in.number())
-                            result.add(edge);
-                        if (!graph.isDirected() &&
-                        (entry.getKey() == edge.in.number() && entry.getValue() == edge.out.number()))
-                            result.add(edge);
-                    }
+                List<Graph.Edge> res = Algorithms.depthFirstSearch(graph, out.number());
+                for (Graph.Edge edge : res) {
+                    result.add(new Edge(getNodeByNumber(edge.getOut()),
+                                        getNodeByNumber(edge.getIn()), 0));
                 }
             }
             control.setMarkers(result);

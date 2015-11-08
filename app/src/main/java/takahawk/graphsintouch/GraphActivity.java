@@ -1,5 +1,6 @@
 package takahawk.graphsintouch;
 
+import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
@@ -31,6 +32,7 @@ public class GraphActivity
         extends AppCompatActivity
         implements View.OnTouchListener {
 
+    private RetainGraphFragment graphFragment;
     private enum Mode { NORMAL, ADD_NODE, ADD_EDGE, REMOVE, DIJKSTRA, DFS };
     private final String TAG = "Graphs";
 
@@ -74,22 +76,22 @@ public class GraphActivity
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        GraphController.DataBundle bundle = controller.getAllData();
-        outState.putFloatArray("x", bundle.x);
-        outState.putFloatArray("y", bundle.y);
-        outState.putIntArray("num", bundle.num);
-        outState.putIntArray("edge_in", bundle.edge_in);
-        outState.putIntArray("edge_out", bundle.edge_out);
-        outState.putIntArray("weight", bundle.edge_weight);
+        outState.putFloat("initX", canvas.getInitX());
+        outState.putFloat("initY", canvas.getInitY());
+        outState.putFloat("scaleX", canvas.getScaleX());
+        outState.putFloat("scaleY", canvas.getScaleY());
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        GraphController.DataBundle bundle = new GraphController.DataBundle();
-        bundle.x = savedInstanceState.getFloatArray("x");
-        bundle.y = savedInstanceState.getFloatArray("y");
-        bundle.num = savedInstanceState.getIntArray("num");
+        canvas.moveInitPoint(
+                savedInstanceState.getFloat("initX"),
+                savedInstanceState.getFloat("initY"));
+        canvas.setScale(
+                savedInstanceState.getFloat("scaleX"),
+                savedInstanceState.getFloat("scaleY")
+        );
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -97,6 +99,21 @@ public class GraphActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+
+        FragmentManager fm = getFragmentManager();
+        graphFragment = (RetainGraphFragment) fm.findFragmentByTag("graph");
+        GraphView graphView;
+        if (graphFragment == null) {
+            graphView = new GraphView(GraphCanvas.BASE_NODE_RADIUS, true);
+            controller = graphView.getController();
+            graphFragment = new RetainGraphFragment();
+            fm.beginTransaction().add(graphFragment, "graph").commit();
+            graphFragment.setController(controller);
+            graphFragment.setGraphView(graphView);
+        } else {
+            graphView = graphFragment.getGraphView();
+            controller = graphFragment.getController();
+        }
 
         // icons
         addNodeIcon = (ImageView) findViewById(R.id.add_node_icon);
@@ -113,12 +130,7 @@ public class GraphActivity
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         algorithmLayout = (LinearLayout) findViewById(R.id.algorithm_layout);
         graphLayout = (FrameLayout) findViewById(R.id.graph_layout);
-        GraphView graphView = new GraphView(GraphCanvas.BASE_NODE_RADIUS, true);
-        controller = graphView.getController();
-        controller.addNode(1, 50, 300);
-        controller.addNode(2, 40, 600);
-        controller.selectNode(40, 300);
-        controller.performDijkstra(40, 600);
+
         // controller.addEdge(40, 600);
         controller.remove(40, 450);
         canvas = new GraphCanvas(this, graphView);
@@ -220,6 +232,8 @@ public class GraphActivity
         mainLayout.getLocationOnScreen(coord);
         canvasX += coord[0];
         canvasY += coord[1];
+
+
     }
 
     @Override
