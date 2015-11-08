@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import takahawk.takalibrary.DisjointSetForest;
 
@@ -45,7 +46,7 @@ public class Algorithms {
      * Performs depth first search from a giver initial vertex and returns resulting tree
      * @param graph graph to which algorithm will be apllied
      * @param initVertex initial vertex
-     * @return map represents branches of dfs-tree (key - child, value - parent)
+     * @return list with vertex pairs branches of dfs-tree (child, parent)
      */
     public static List<VertexPair> depthFirstSearch(Graph graph, int initVertex) {
         List<VertexPair> result = new ArrayList<>();
@@ -159,5 +160,53 @@ public class Algorithms {
             }
         }
         return tree;
+    }
+
+    /**
+     * Returns list of node numbers that represents the shortest path from source to destination. Used Dijkstra algorithm
+     * @param source source vertex number
+     * @param destination destination vertex number
+     * @return list representing shortest path from source to destination
+     */
+    public static List<Integer> shortestPathDijkstra(Graph graph, int source, int destination) {
+        Map<Integer, Integer> dist = new HashMap<>();
+        Map<Integer, Integer> prev = new HashMap<>();
+        Set<Integer> unvisited = new TreeSet(graph.vertexes());
+
+        dist.put(source, 0);
+
+        while (!unvisited.isEmpty()) {
+            int min = -1;
+            for (int i : unvisited) {
+                if (dist.containsKey(i) && (min == - 1 || dist.get(i) > dist.get(min)))
+                    min = i;
+            }
+            if (min == -1)
+                break;
+            int current_node = min;
+            unvisited.remove(current_node);
+
+            for (Graph.Edge edge : graph.getAdjacentEdges(current_node)) {
+                int adjacentVertex = (edge.getIn() != current_node) ? edge.getIn() : edge.getOut();
+                int alt = dist.get(current_node) + edge.getWeight();
+                if (!dist.containsKey(adjacentVertex) || alt < dist.get(adjacentVertex)) {
+                    dist.put(adjacentVertex, alt);
+                    prev.put(adjacentVertex, current_node);
+                }
+            }
+        }
+
+        List<Integer> result = new ArrayList<>();
+        if (!prev.containsKey(destination))
+            return null;
+
+        int node = destination;
+        while (node != source) {
+            result.add(node);
+            node = prev.get(node);
+        }
+        result.add(source);
+        Collections.reverse(result);
+        return result;
     }
 }

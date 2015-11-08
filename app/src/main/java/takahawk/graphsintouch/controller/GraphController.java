@@ -590,7 +590,7 @@ public class GraphController {
 
         @Override
         public void apply() {
-            List<Integer> res = graph.shortestPathDijkstra(out.number(), in.number());
+            List<Integer> res = Algorithms.shortestPathDijkstra(graph, out.number(), in.number());
             if (res == null)
                 return;
             if (result == null) {
