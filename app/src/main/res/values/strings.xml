@@ -33,4 +33,6 @@
     <string name="kruskal_done">Minimum spanning tree: %1$d </string>
     <string name="kruskal_failure">Kruskal\'s algorithm working for undirected graphs only</string>
     <string name="prim_failure">Prim\'s algorithm working for undirected graphs only</string>
+
+    <string name="back_menu">Back</string>
 </resources>

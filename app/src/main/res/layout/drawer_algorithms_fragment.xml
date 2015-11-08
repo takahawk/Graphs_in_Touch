@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/algorithm_layout"
+    android:orientation="vertical"
+    android:background="@color/material_grey_600">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="backToMainMenu"
+        android:background="@drawable/blink">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/nav_drawer_item_padding"
+            android:paddingBottom="@dimen/nav_drawer_item_padding"
+            android:paddingLeft="@dimen/nav_drawer_item_padding"
+            android:paddingRight="@dimen/nav_drawer_item_padding"
+            android:src="@drawable/ic_keyboard_backspace_white_48dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/nav_drawer_text_color"
+            android:textSize="@dimen/nav_drawer_item_text_size"
+            android:gravity="center"
+            android:text="@string/back_menu" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:paddingLeft="50dp"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_drawer_item_padding"
+        android:paddingBottom="@dimen/nav_drawer_item_padding"
+        android:paddingLeft="@dimen/nav_drawer_item_padding"
+        android:paddingRight="@dimen/nav_drawer_item_padding"
+        android:textColor="@color/nav_drawer_text_color"
+        android:textSize="@dimen/nav_drawer_item_text_size"
+        android:gravity="center"
+        android:onClick="backFromAlgorithms"
+        android:background="@drawable/blink"
+        android:text="@string/dfs_algorithm" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_drawer_item_padding"
+        android:paddingBottom="@dimen/nav_drawer_item_padding"
+        android:paddingLeft="@dimen/nav_drawer_item_padding"
+        android:paddingRight="@dimen/nav_drawer_item_padding"
+        android:textColor="@color/nav_drawer_text_color"
+        android:textSize="@dimen/nav_drawer_item_text_size"
+        android:gravity="center"
+        android:id="@+id/dfs_item"
+        android:onClick="dfsClick"
+        android:background="@drawable/blink"
+        android:text="@string/dfs_algorithm" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_drawer_item_padding"
+        android:paddingBottom="@dimen/nav_drawer_item_padding"
+        android:paddingLeft="@dimen/nav_drawer_item_padding"
+        android:paddingRight="@dimen/nav_drawer_item_padding"
+        android:textColor="@color/nav_drawer_text_color"
+        android:textSize="@dimen/nav_drawer_item_text_size"
+        android:gravity="center"
+        android:id="@+id/prim_item"
+        android:background="@drawable/blink"
+        android:onClick="performPrim"
+        android:text="@string/prims_algorithm" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_drawer_item_padding"
+        android:paddingBottom="@dimen/nav_drawer_item_padding"
+        android:paddingLeft="@dimen/nav_drawer_item_padding"
+        android:paddingRight="@dimen/nav_drawer_item_padding"
+        android:textColor="@color/nav_drawer_text_color"
+        android:textSize="@dimen/nav_drawer_item_text_size"
+        android:gravity="center"
+        android:id="@+id/kruskal_item"
+        android:onClick="performKruskal"
+        android:background="@drawable/blink"
+        android:text="@string/kruskals_algorithm" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_drawer_item_padding"
+        android:paddingBottom="@dimen/nav_drawer_item_padding"
+        android:paddingLeft="@dimen/nav_drawer_item_padding"
+        android:paddingRight="@dimen/nav_drawer_item_padding"
+        android:textColor="@color/nav_drawer_text_color"
+        android:textSize="@dimen/nav_drawer_item_text_size"
+        android:gravity="center"
+        android:id="@+id/dijkstra_item"
+        android:onClick="dijkstraClick"
+        android:background="@drawable/blink"
+        android:text="@string/dijkstras_algorithm" />
+    </LinearLayout>
+</LinearLayout>

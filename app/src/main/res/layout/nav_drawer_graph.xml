@@ -4,6 +4,7 @@
     android:layout_width="240dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
+    android:id="@+id/drawer_container"
     android:background="@color/material_grey_600">
     <fragment
         android:name="takahawk.graphsintouch.DrawerMainFragment"

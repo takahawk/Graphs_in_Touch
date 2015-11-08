@@ -1,14 +1,12 @@
 package takahawk.graphsintouch;
 
 import android.app.FragmentManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,8 +20,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.concurrent.TimeUnit;
 
 import takahawk.graphsintouch.controller.GraphController;
 import takahawk.graphsintouch.view.GraphView;
@@ -47,6 +43,8 @@ public class GraphActivity
     private FrameLayout graphLayout;
     private GraphController controller;
     private GraphCanvas canvas;
+
+    private DrawerMainFragment drawerMainFragment;
 
     // for drag events
     private boolean drag = false;
@@ -117,7 +115,6 @@ public class GraphActivity
 
         // icons
         initIcons();
-        initMenuItems();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbarLayout = (LinearLayout)  findViewById(R.id.toolbarLayout);
@@ -141,6 +138,13 @@ public class GraphActivity
                 return true;
             }
         });
+
+        if (savedInstanceState != null)
+            return;
+
+        drawerMainFragment = new DrawerMainFragment();
+        drawerMainFragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction().add(R.id.drawer_container, drawerMainFragment).commit();
     }
 
     private void initIcons() {
@@ -202,39 +206,6 @@ public class GraphActivity
                 return true;
             }
         });
-    }
-    private void initMenuItems() {
-
-        dijkstraMenuItem = (TextView) findViewById(R.id.dijkstra_item);
-        dfsMenuItem = (TextView) findViewById(R.id.dfs_item);
-
-        dijkstraMenuItem.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionIndex() == 0) {
-                    switch (event.getActionMasked()) {
-                        case MotionEvent.ACTION_DOWN:
-                            switchDijkstraMode();
-                            break;
-                    }
-                }
-                return true;
-            }
-        });
-        dfsMenuItem.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionIndex() == 0) {
-                    switch (event.getActionMasked()) {
-                        case MotionEvent.ACTION_DOWN:
-                            switchDFSMode();
-                            break;
-                    }
-                }
-                return true;
-            }
-        });
-
     }
 
     @Override
@@ -494,6 +465,11 @@ public class GraphActivity
     }
 
     @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_graph, menu);
@@ -522,13 +498,13 @@ public class GraphActivity
     public void showAlgorithms(View view) {
         if (permanentSnackbar != null)
             permanentSnackbar.dismiss();
-        if (algorithmLayout.getVisibility() == View.GONE) {
-            algorithmLayout.setVisibility(View.VISIBLE);
-            blinkOn(view);
-        } else {
-            algorithmLayout.setVisibility(View.GONE);
-            blinkOff(view);
-        }
+        blink(view);
+        DrawerAlgorithmsFragment algorithmsFragment = new DrawerAlgorithmsFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.drawer_container, algorithmsFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
     }
 
     public void undoClick(View view) {
@@ -549,6 +525,7 @@ public class GraphActivity
             permanentSnackbar.dismiss();
         mode = Mode.NORMAL;
     }
+
     public void switchAddNodeMode(){
         clearAlgorithms();
         if (mode == Mode.ADD_NODE) {
@@ -663,6 +640,23 @@ public class GraphActivity
         }
     }
 
+
+
+    public void switchDirectedUndirected(View view) {
+        blink(view);
+        controller.switchDirectedUndirected();
+        canvas.invalidate();
+    }
+
+    public void clearAlgorithms() {
+        if (mode == Mode.DIJKSTRA)
+            blinkOff(dijkstraMenuItem);
+        if (mode == Mode.DFS)
+            blinkOff(dfsMenuItem);
+        controller.clearAlgorithms();
+        canvas.invalidate();
+    }
+
     public void performPrim(View view) {
         blink(view);
         drawerLayout.closeDrawers();
@@ -709,19 +703,19 @@ public class GraphActivity
         asyncTask.execute();
     }
 
-    public void switchDirectedUndirected(View view) {
-        blink(view);
-        controller.switchDirectedUndirected();
-        canvas.invalidate();
+    public void dijkstraClick(View view) {
+        switchDijkstraMode();
     }
 
-    public void clearAlgorithms() {
-        if (mode == Mode.DIJKSTRA)
-            blinkOff(dijkstraMenuItem);
-        if (mode == Mode.DFS)
-            blinkOff(dfsMenuItem);
-        controller.clearAlgorithms();
-        canvas.invalidate();
+    public void dfsClick(View view) {
+        switchDFSMode();
+    }
+
+    public void backToMainMenu(View view) {
+        blink(view);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.drawer_container, drawerMainFragment);
+        transaction.commit();
     }
 
 }
