@@ -29,7 +29,7 @@ public class GraphActivity
         implements View.OnTouchListener {
 
     private RetainGraphFragment graphFragment;
-    private enum Mode { NORMAL, ADD_NODE, ADD_EDGE, REMOVE, DIJKSTRA, DFS };
+    private enum Mode { NORMAL, ADD_NODE, ADD_EDGE, EDIT, REMOVE, DIJKSTRA, DFS };
     private final String TAG = "Graphs";
 
     private Mode mode = Mode.NORMAL;
@@ -55,6 +55,7 @@ public class GraphActivity
     private ImageView addNodeIcon;
     private ImageView addEdgeIcon;
     private ImageView deleteIcon;
+    private ImageView editIcon;
     private ImageView undoIcon;
     private ImageView redoIcon;
 
@@ -150,6 +151,7 @@ public class GraphActivity
     private void initIcons() {
         addNodeIcon = (ImageView) findViewById(R.id.add_node_icon);
         addEdgeIcon = (ImageView) findViewById(R.id.add_edge_icon);
+        editIcon = (ImageView) findViewById(R.id.edit_icon);
         deleteIcon = (ImageView) findViewById(R.id.delete_icon);
         undoIcon = (ImageView) findViewById(R.id.undo_icon);
         redoIcon = (ImageView) findViewById(R.id.redo_icon);
@@ -204,6 +206,12 @@ public class GraphActivity
                     }
                 }
                 return true;
+            }
+        });
+        editIcon.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
             }
         });
     }
@@ -569,6 +577,21 @@ public class GraphActivity
             blinkOn(deleteIcon);
         }
 
+    }
+
+    public void switchEditMode() {
+        clearAlgorithms();
+        if (mode == Mode.EDIT) {
+            if (permanentSnackbar != null)
+                permanentSnackbar.dismiss();
+            mode = Mode.NORMAL;
+            blinkOff(editIcon);
+        } else {
+            permanentSnackbar = Snackbar.make(graphLayout, R.string.edit_mode_enter, Snackbar.LENGTH_INDEFINITE);
+            permanentSnackbar.show();
+            mode = Mode.EDIT;
+            blinkOn(editIcon);
+        }
     }
 
     public void switchDijkstraMode() {

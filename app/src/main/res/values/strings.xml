@@ -23,6 +23,7 @@
     <string name="edge_adding_undone">Adding of edge between nodes %1$d and %2$d is undone</string>
 
     <string name="remove_mode_enter">Tap on vertex or edge to remove it</string>
+    <string name="edit_mode_enter">Tap on vertex or edge label to change number or weight</string>
 
     <string name="dijkstra_mode_enter">Specify outbound vertex</string>
     <string name="dijkstra_mode_continue">Specify inbound vertex</string>
