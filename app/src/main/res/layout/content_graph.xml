@@ -7,6 +7,7 @@
         tools:showIn="@layout/activity_graph" tools:context=".GraphActivity"
         android:id="@+id/mainLayout">
 
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
@@ -74,6 +75,26 @@
                     android:onClick="redoClick"
                     />
             </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editLayout"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/edit_message" />
+        <EditText
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_button_text"/>
+    </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
