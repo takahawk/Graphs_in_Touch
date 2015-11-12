@@ -377,7 +377,17 @@ public class GraphController {
         undoDeque.push(op);
     }
 
-
+    public void changeElement(String value) {
+        // TODO:
+        if (selectedNode != null) {
+            int number = Integer.parseInt(value);
+            if (getNodeByNumber(number) == null) {
+                Operation op = new ChangeNodeNumber(selectedNode, Integer.parseInt(value));
+                op.apply();
+                undoDeque.push(op);
+            }
+        }
+    }
 
     public interface Operation {
         void apply();
@@ -575,6 +585,31 @@ public class GraphController {
         public void undo() {
             graph.addEdge(edge.out.number(), edge.in.number());
             control.addEdge(edge);
+        }
+    }
+
+    class ChangeNodeNumber
+        implements Operation {
+        Node node;
+        int initialNumber;
+        int newNumber;
+
+        public ChangeNodeNumber(Node node, int newNumber) {
+            this.node = node;
+            this.newNumber = newNumber;
+            initialNumber = node.number();
+        }
+
+        @Override
+        public void apply() {
+            graph.changeVertexNumber(initialNumber, newNumber);
+            node.setNumber(newNumber);
+        }
+
+        @Override
+        public void undo() {
+            graph.changeVertexNumber(newNumber, initialNumber);
+            node.setNumber(initialNumber);
         }
     }
 

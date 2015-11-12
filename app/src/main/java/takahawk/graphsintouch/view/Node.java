@@ -43,6 +43,10 @@ public class Node {
         return _number;
     }
 
+    public void setNumber(int number) {
+        _number = number;
+    }
+
     public Node(float x, float y, float radius, int number) {
         _x = x;
         _y = y;

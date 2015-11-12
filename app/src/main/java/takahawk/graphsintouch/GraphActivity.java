@@ -1,6 +1,7 @@
 package takahawk.graphsintouch;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
@@ -16,6 +17,9 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +44,7 @@ public class GraphActivity
     private LinearLayout algorithmLayout;
     private LinearLayout mainLayout;
     private LinearLayout toolbarLayout;
+    private LinearLayout editLayout;
     private FrameLayout graphLayout;
     private GraphController controller;
     private GraphCanvas canvas;
@@ -61,6 +66,8 @@ public class GraphActivity
 
     private TextView dijkstraMenuItem;
     private TextView dfsMenuItem;
+
+    private EditText editValue;
 
     // scale zoom in/zoom out
     private ScaleGestureDetector scaleDetector;
@@ -117,6 +124,7 @@ public class GraphActivity
         // icons
         initIcons();
 
+        editLayout = (LinearLayout) findViewById(R.id.editLayout);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbarLayout = (LinearLayout)  findViewById(R.id.toolbarLayout);
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
@@ -126,7 +134,7 @@ public class GraphActivity
         canvas = new GraphCanvas(this, graphView);
         canvas.setOnTouchListener(this);
 
-
+        editValue = (EditText) findViewById(R.id.edit_value);
         graphLayout.addView(canvas);
         permanentSnackbar = Snackbar.make(graphLayout, "", Snackbar.LENGTH_INDEFINITE);
 
@@ -211,7 +219,18 @@ public class GraphActivity
         editIcon.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return false;
+                if (event.getActionIndex() == 0) {
+                    switch (event.getActionMasked()) {
+                        case MotionEvent.ACTION_DOWN:
+                            if (controller.nodeSelected())
+                                switchEditMode();
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                        case MotionEvent.ACTION_UP:
+                            break;
+                    }
+                }
+                return true;
             }
         });
     }
@@ -231,6 +250,8 @@ public class GraphActivity
                 return addNodeModeTouch(event);
             case ADD_EDGE:
                 return addEdgeModeTouch(event);
+            case EDIT:
+                return editModeTouch(event);
             case REMOVE:
                 return removeModeTouch(event);
             case DIJKSTRA:
@@ -365,6 +386,11 @@ public class GraphActivity
                 break;
         }
 
+        return true;
+    }
+
+    public boolean editModeTouch(MotionEvent event) {
+        switchEditMode();
         return true;
     }
 
@@ -585,11 +611,19 @@ public class GraphActivity
             if (permanentSnackbar != null)
                 permanentSnackbar.dismiss();
             mode = Mode.NORMAL;
+            editLayout.setVisibility(View.GONE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editValue.getWindowToken(), 0);
             blinkOff(editIcon);
         } else {
             permanentSnackbar = Snackbar.make(graphLayout, R.string.edit_mode_enter, Snackbar.LENGTH_INDEFINITE);
-            permanentSnackbar.show();
+            // permanentSnackbar.show();
             mode = Mode.EDIT;
+            editLayout.setVisibility(View.VISIBLE);
+            if (editValue.requestFocus()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            }
             blinkOn(editIcon);
         }
     }
@@ -739,6 +773,11 @@ public class GraphActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.drawer_container, drawerMainFragment);
         transaction.commit();
+    }
+
+    public void changeValue(View view) {
+        controller.changeElement(editValue.getText().toString());
+        switchEditMode();
     }
 
 }
