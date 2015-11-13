@@ -643,6 +643,7 @@ public class GraphActivity
                 permanentSnackbar = Snackbar.make(graphLayout, R.string.dijkstra_mode_enter, Snackbar.LENGTH_INDEFINITE);
             permanentSnackbar.show();
             mode = Mode.DIJKSTRA;
+            dijkstraMenuItem = (TextView) findViewById(R.id.dijkstra_item);
             blinkOn(dijkstraMenuItem);
             drawerLayout.closeDrawers();
         }
