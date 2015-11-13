@@ -75,6 +75,9 @@ public class Edge
         return new Pair<Float, Float>((_x2 + _x1) / 2 + ((float)Math.cos(_angle + Math.PI / 2) * 50), (_y2 + _y1) / 2 + ((float)Math.sin(_angle + Math.PI / 2) * 50));
     }
 
+    public void setLabel(int newLabel) {
+        _label = newLabel;
+    }
     @Override
     public void focus() {
         focused = true;

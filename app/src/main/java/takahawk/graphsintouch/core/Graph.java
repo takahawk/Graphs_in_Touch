@@ -285,6 +285,17 @@ public class Graph {
         }
     }
 
+    public void changeEdgeWeight(int out, int in, int weight) {
+        if (adjOutList.containsKey(out)) {
+            for (Edge edge : adjOutList.get(out)) {
+                if (edge.getIn() == in) {
+                    edge.weight = weight;
+                    return;
+                }
+            }
+        }
+    }
+
     /**
      * Add new Edge with weight 1
      * @param out outbound vertex number

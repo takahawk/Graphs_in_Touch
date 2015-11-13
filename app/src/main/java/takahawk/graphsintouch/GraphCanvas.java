@@ -118,7 +118,7 @@ public class GraphCanvas
                     (initY + node.y() + BASE_NODE_RADIUS) * scaleY);
             canvas.drawOval(rect, nodePaint);
             drawRectText(Integer.toString(node.number()), canvas, rect);
-            if (node.focused) {
+            if (node.isFocused()) {
                 canvas.drawOval(rect, selectionPaint);
             } else {
                 canvas.drawOval(rect, borderPaint);
@@ -126,6 +126,7 @@ public class GraphCanvas
         }
 
         for (Edge edge : graphView.getEdges()) {
+            Paint paint = edge.isFocused() ? selectionPaint : edgePaint;
             float x1 = (initX + edge.x1()) * scaleX;
             float y1 = (initY + edge.y1()) * scaleY;
             float x2 = (initX + edge.x2()) * scaleX;
@@ -133,10 +134,10 @@ public class GraphCanvas
             canvas.drawLine(x1,
                     y1,
                     x2,
-                    y2, edgePaint);
+                    y2, paint);
 
             Pair<Float, Float> labelPos = edge.getLabelPos();
-            canvas.drawText(Integer.toString(edge.label()), (initX + labelPos.first) * scaleX, (initY + labelPos.second) * scaleY, textPaint);
+            canvas.drawText(Integer.toString(edge.label()), (initX + labelPos.first) * scaleX, (initY + labelPos.second) * scaleY, paint);
             if (graphView.isDirectedEdges()) {
                 edgeTip.reset();
                 edgeTip.moveTo(x2, y2);
@@ -158,7 +159,7 @@ public class GraphCanvas
                 edgeTip.lineTo(tip2x,tip2y);
                 edgeTip.moveTo(tip1x, tip1y);
                 edgeTip.lineTo(tip2x, tip2y);
-                canvas.drawPath(edgeTip, edgePaint);
+                canvas.drawPath(edgeTip, paint);
             }
         }
 

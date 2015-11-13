@@ -287,7 +287,7 @@ public class GraphActivity
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                controller.selectNode(x, y);
+                controller.select(x, y);
                 drag = true;
                 dragX = event.getX();
                 dragY = event.getY();

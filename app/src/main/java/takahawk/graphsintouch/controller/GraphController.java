@@ -11,6 +11,7 @@ import java.util.Map;
 import takahawk.graphsintouch.core.Algorithms;
 import takahawk.graphsintouch.core.Graph;
 import takahawk.graphsintouch.view.Edge;
+import takahawk.graphsintouch.view.Focusable;
 import takahawk.graphsintouch.view.GraphView;
 import takahawk.graphsintouch.view.Node;
 
@@ -23,7 +24,7 @@ public class GraphController {
     private static final java.util.Random rand = new java.util.Random();
     private GraphView.Control control;
     private Graph graph = new Graph(true);
-    private Node selectedNode;
+    private Focusable selected;
     private Deque<Operation> undoDeque = new ArrayDeque<Operation>();
     private Deque<Operation> redoDeque = new ArrayDeque<Operation>();
 
@@ -79,11 +80,32 @@ public class GraphController {
      * @param node node to be selected
      */
     public void selectNode(Node node) {
-        if (selectedNode != null)
-            selectedNode.focused = false;
-            selectedNode = node;
-        if (node != null)
-            node.focused = true;
+        if (selected != null)
+            selected.unfocus();
+            selected = node;
+        if (selected != null)
+            selected.focus();
+    }
+
+    /**
+     * Select element by coordinates
+     * @param x horizontal coordinate
+     * @param y vertical coordinate
+     * @return true - if element selected; false - if nothing selected
+     */
+    public boolean select(float x, float y) {
+        //TODO:
+        if (selected != null) {
+            selected.unfocus();
+        }
+        selected = getNode(x, y);
+        if (selected == null)
+            selected = getEdge(x, y);
+        if (selected != null) {
+            selected.focus();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -93,13 +115,12 @@ public class GraphController {
      * @return true - if node is selected, false - if no node is selected
      */
     public boolean selectNode(float x, float y) {
-        if (selectedNode != null) {
-            selectedNode.focused = false;
-            selectedNode = null;
+        if (selected != null) {
+            selected.unfocus();
         }
-        selectedNode = getNode(x, y);
-        if (selectedNode != null) {
-            selectedNode.focused = true;
+        selected = getNode(x, y);
+        if (selected != null) {
+            selected.focus();
             return true;
         }
         return false;
@@ -107,13 +128,12 @@ public class GraphController {
     }
 
     public boolean selectNodeExtendedRadius(float x, float y) {
-        if (selectedNode != null) {
-            selectedNode.focused = false;
-            selectedNode = null;
+        if (selected != null) {
+            selected.unfocus();
         }
-        selectedNode = getExtendedRadiusNode(x, y);
-        if (selectedNode != null) {
-            selectedNode.focused = true;
+        selected = getExtendedRadiusNode(x, y);
+        if (selected != null) {
+            selected.focus();
             return true;
         }
         return false;
@@ -182,10 +202,10 @@ public class GraphController {
 
     /**
      * Return true if node selected
-     * @return true - if node selected, false - otherwise
+     * @return true - if node selected, false - otherwise (edge or nothing at all)
      */
     public boolean nodeSelected() {
-        return selectedNode != null;
+        return selected != null && selected instanceof Node;
     }
 
     /**
@@ -211,6 +231,9 @@ public class GraphController {
      * @param dY vertical movement distance
      */
     public void moveNode(float dX, float dY) {
+        if (!(selected instanceof Node))
+            return;
+        Node selectedNode = (Node) selected;
         if (undoDeque.peek() instanceof MoveNode && ((MoveNode) undoDeque.peek()).node == selectedNode) {
             ((MoveNode) undoDeque.peek()).add(dX, dY);
             selectedNode.move(dX, dY);
@@ -240,11 +263,11 @@ public class GraphController {
      * Remove selected node
      */
     public void removeNode() {
-        if (selectedNode != null) {
-            Operation op = new RemoveNode(selectedNode);
+        if (selected != null && selected instanceof Node) {
+            Operation op = new RemoveNode((Node)selected);
             op.apply();
             undoDeque.push(op);
-            selectedNode = null;
+            selected = null;
         }
     }
 
@@ -278,9 +301,9 @@ public class GraphController {
      */
     public boolean startAddingEdge(float x, float y) {
         selectNode(getExtendedRadiusNode(x, y));
-        if (selectedNode == null)
+        if (selected == null)
             return false;
-        control.createQuasiEdge(selectedNode);
+        control.createQuasiEdge((Node)selected);
         return true;
     }
 
@@ -303,8 +326,8 @@ public class GraphController {
         control.killQuasiEdge();
         Node in = getExtendedRadiusNode(in_x, in_y);
         if (in != null) {
-            // TODO:
-            Integer weight = rand.nextInt(20);
+            Integer weight = 1;
+            Node selectedNode = (Node) selected;
             if (graph.addEdge(selectedNode.number(), in.number(), weight)) {
                 Operation op = new AddEdge(selectedNode, in, weight);
                 op.apply();
@@ -317,7 +340,10 @@ public class GraphController {
 
     public int performDijkstra(float x, float y) {
         Node second = getNode(x, y);
-        if (selectedNode == second)
+        if (!(selected instanceof Node))
+            return -1;
+        Node selectedNode = (Node) selected;
+        if (selected == second)
             return 0;
         if (second != null) {
             PerformDijkstra op = new PerformDijkstra(selectedNode, second);
@@ -334,9 +360,9 @@ public class GraphController {
     }
 
     public void performDFS() {
-        if (selectedNode == null)
+        if (selected == null || !(selected instanceof Node))
             return;
-        Operation op = new PerformDFS(selectedNode);
+        Operation op = new PerformDFS((Node) selected);
         op.apply();
         undoDeque.push(op);
     }
@@ -378,11 +404,17 @@ public class GraphController {
     }
 
     public void changeElement(String value) {
-        // TODO:
-        if (selectedNode != null) {
-            int number = Integer.parseInt(value);
-            if (getNodeByNumber(number) == null) {
-                Operation op = new ChangeNodeNumber(selectedNode, Integer.parseInt(value));
+        if (selected != null) {
+            if (selected instanceof Node) {
+                int number = Integer.parseInt(value);
+                if (getNodeByNumber(number) == null) {
+                    Operation op = new ChangeNodeNumber((Node) selected, number);
+                    op.apply();
+                    undoDeque.push(op);
+                }
+            } else {
+                int weight = Integer.parseInt(value);
+                Operation op = new ChangeEdgeWeight((Edge) selected, weight);
                 op.apply();
                 undoDeque.push(op);
             }
@@ -429,8 +461,8 @@ public class GraphController {
             for (Operation op : undoedEdges)
                 op.apply();
 
-            selectedNode = null;
-            node.focused = false;
+            selected = null;
+            node.unfocus();
             graph.removeVertex(node.number());
             control.removeNode(node);
         }
@@ -458,8 +490,8 @@ public class GraphController {
             for (Operation op : removedEdges)
                 op.apply();
 
-            selectedNode = null;
-            node.focused = false;
+            selected = null;
+            node.unfocus();
             graph.removeVertex(node.number());
             control.removeNode(node);
         }
@@ -510,10 +542,6 @@ public class GraphController {
         public int[] edge_in;
         public int[] edge_out;
         public int[] edge_weight;
-
-        public DataBundle() {
-
-        }
     }
 
     class MoveNode
@@ -523,7 +551,7 @@ public class GraphController {
         float dY;
 
         public MoveNode(float dX, float dY) {
-            node = selectedNode;
+            node = (Node) selected;
             this.dX = dX;
             this.dY = dY;
         }
@@ -610,6 +638,31 @@ public class GraphController {
         public void undo() {
             graph.changeVertexNumber(newNumber, initialNumber);
             node.setNumber(initialNumber);
+        }
+    }
+
+    class ChangeEdgeWeight
+        implements Operation {
+        Edge edge;
+        int initialWeight;
+        int newWeight;
+
+        public ChangeEdgeWeight(Edge edge, int newWeight) {
+            this.edge = edge;
+            this.initialWeight = edge.label();
+            this.newWeight = newWeight;
+        }
+
+        @Override
+        public void apply() {
+            graph.changeEdgeWeight(edge.out.number(), edge.in.number(), newWeight);
+            edge.setLabel(newWeight);
+        }
+
+        @Override
+        public void undo() {
+            graph.changeEdgeWeight(edge.out.number(), edge.in.number(), initialWeight);
+            edge.setLabel(initialWeight);
         }
     }
 
