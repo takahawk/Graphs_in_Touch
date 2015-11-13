@@ -260,7 +260,7 @@ public class GraphController {
     }
 
     /**
-     * Remove selected node
+     * Remove selected item
      */
     public void remove() {
         if (selected != null) {

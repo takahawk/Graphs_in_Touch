@@ -222,7 +222,7 @@ public class GraphActivity
                 if (event.getActionIndex() == 0) {
                     switch (event.getActionMasked()) {
                         case MotionEvent.ACTION_DOWN:
-                            if (controller.nodeSelected())
+                            if (controller.elementSelected())
                                 switchEditMode();
                             break;
                         case MotionEvent.ACTION_CANCEL:
