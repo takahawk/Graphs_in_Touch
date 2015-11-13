@@ -200,8 +200,8 @@ public class GraphActivity
                 if (event.getActionIndex() == 0) {
                     switch (event.getActionMasked()) {
                         case MotionEvent.ACTION_DOWN:
-                            if (controller.nodeSelected()) {
-                                controller.removeNode();
+                            if (controller.elementSelected()) {
+                                controller.remove();
                                 blink(v);
                                 canvas.invalidate();
                             }

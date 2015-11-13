@@ -262,12 +262,19 @@ public class GraphController {
     /**
      * Remove selected node
      */
-    public void removeNode() {
-        if (selected != null && selected instanceof Node) {
-            Operation op = new RemoveNode((Node)selected);
-            op.apply();
-            undoDeque.push(op);
-            selected = null;
+    public void remove() {
+        if (selected != null) {
+            if (selected instanceof Node) {
+                Operation op = new RemoveNode((Node) selected);
+                op.apply();
+                undoDeque.push(op);
+                selected = null;
+            } else {
+                Operation op = new RemoveEdge((Edge) selected);
+                op.apply();;
+                undoDeque.push(op);
+                selected = null;
+            }
         }
     }
 
@@ -401,6 +408,10 @@ public class GraphController {
         Operation op = new ClearAlgorithms();
         op.apply();
         undoDeque.push(op);
+    }
+
+    public boolean elementSelected() {
+        return selected != null;
     }
 
     public void changeElement(String value) {
