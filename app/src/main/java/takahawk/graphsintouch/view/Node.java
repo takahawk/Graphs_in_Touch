@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by takahawk on 31.10.2015.
+ * @author takahawk
  */
-public class Node {
+public class Node
+    implements Focusable {
     private List<NodeListener> listeners = new ArrayList<NodeListener>();
     private float _x;
     private float _y;
     private float _radius;
     private int _number;
-    public boolean focused;
+    private boolean focused;
 
     public void addListener(NodeListener nl) { listeners.add(nl); }
     public void removeListener(NodeListener nl) { listeners.remove(nl); }
@@ -55,5 +56,13 @@ public class Node {
         focused = false;
     }
 
+    @Override
+    public void focus() {
+        focused = true;
+    }
 
+    @Override
+    public void unfocus() {
+        focused = false;
+    }
 }

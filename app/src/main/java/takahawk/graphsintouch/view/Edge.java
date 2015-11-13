@@ -6,7 +6,7 @@ import android.util.Pair;
  * Created by takahawk on 31.10.2015.
  */
 public class Edge
-        implements NodeListener {
+        implements NodeListener, Focusable {
     public Node out;
     public Node in;
 
@@ -14,6 +14,7 @@ public class Edge
     private float _x2, _y2;
     private double _angle;
     private int _label;
+    private boolean focused;
 
     public float x1() {
         return _x1;
@@ -72,5 +73,15 @@ public class Edge
 
     public Pair<Float, Float> getLabelPos() {
         return new Pair<Float, Float>((_x2 + _x1) / 2 + ((float)Math.cos(_angle + Math.PI / 2) * 50), (_y2 + _y1) / 2 + ((float)Math.sin(_angle + Math.PI / 2) * 50));
+    }
+
+    @Override
+    public void focus() {
+        focused = true;
+    }
+
+    @Override
+    public void unfocus() {
+        focused = false;
     }
 }
