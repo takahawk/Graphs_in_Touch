@@ -7,4 +7,5 @@ package takahawk.graphsintouch.view;
 public interface Focusable {
     void focus();
     void unfocus();
+    boolean isFocused();
 }

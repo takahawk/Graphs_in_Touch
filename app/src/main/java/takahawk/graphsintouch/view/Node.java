@@ -65,4 +65,9 @@ public class Node
     public void unfocus() {
         focused = false;
     }
+
+    @Override
+    public boolean isFocused() {
+        return focused;
+    }
 }

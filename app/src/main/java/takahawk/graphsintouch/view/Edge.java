@@ -84,4 +84,9 @@ public class Edge
     public void unfocus() {
         focused = false;
     }
+
+    @Override
+    public boolean isFocused() {
+        return focused;
+    }
 }
