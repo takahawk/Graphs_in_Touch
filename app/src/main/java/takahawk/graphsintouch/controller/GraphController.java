@@ -32,17 +32,6 @@ public class GraphController {
         this.control = control;
     }
 
-    public void restore(DataBundle bundle) {
-        for (int i = 0; i < bundle.x.length; i++) {
-            control.addNode(new Node(bundle.x[i], bundle.y[i], control.radius, bundle.num[i]));
-        }
-        for (int i = 0; i < bundle.edge_in.length; i++) {
-
-            control.addEdge(new Edge(nodeByNumber(bundle.edge_out[i]),
-                                nodeByNumber(bundle.edge_in[i]), bundle.edge_weight[i]));
-        }
-    }
-
     private Node nodeByNumber(int number) {
         for (Node node : control.nodes()) {
             if (node.number() == number)
