@@ -334,6 +334,10 @@ public class GraphController {
         return null;
     }
 
+    public void stopAddingEdge() {
+        control.killQuasiEdge();
+    }
+
     public int performDijkstra(float x, float y) {
         Node second = getNode(x, y);
         if (!(selected instanceof Node))

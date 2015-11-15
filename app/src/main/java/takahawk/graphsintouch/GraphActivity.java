@@ -582,6 +582,7 @@ public class GraphActivity
                 permanentSnackbar.dismiss();
             mode = Mode.NORMAL;
             blinkOff(addEdgeIcon);
+            controller.stopAddingEdge();
         } else {
             permanentSnackbar = Snackbar.make(graphLayout, R.string.add_edge_mode_enter, Snackbar.LENGTH_INDEFINITE);
             permanentSnackbar.show();
