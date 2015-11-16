@@ -425,6 +425,50 @@ public class GraphController {
         }
     }
 
+    public float getMaxX() {
+        float max = 0;
+        for (Node node : control.nodes()) {
+            float temp = node.x() + node.radius();
+            if (temp > max) {
+                max = temp;
+            }
+        }
+        return max;
+    }
+
+    public float getMinX() {
+        float min = 0;
+        for (Node node : control.nodes()) {
+            float temp = node.x() - node.radius();
+            if (temp < min) {
+                min = temp;
+            }
+        }
+        return min;
+    }
+
+    public float getMaxY() {
+        float max = 0;
+        for (Node node : control.nodes()) {
+            float temp = node.y() + node.radius();
+            if (temp > max) {
+                max = temp;
+            }
+        }
+        return max;
+    }
+
+    public float getMinY() {
+        float min = 0;
+        for (Node node : control.nodes()) {
+            float temp = node.y() - node.radius();
+            if (temp < min) {
+                min = temp;
+            }
+        }
+        return min;
+    }
+
     public interface Operation {
         void apply();
         void undo();
