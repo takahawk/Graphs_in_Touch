@@ -138,4 +138,48 @@ public class GraphView {
     public Edge getQuasiEdge() {
         return quasiEdge;
     }
+
+    public float getMaxX() {
+        float max = 0;
+        for (Node node : nodes) {
+            float temp = node.x() + node.radius();
+            if (temp > max) {
+                max = temp;
+            }
+        }
+        return max;
+    }
+
+    public float getMinX() {
+        float min = 0;
+        for (Node node : nodes) {
+            float temp = node.x() - node.radius();
+            if (temp < min) {
+                min = temp;
+            }
+        }
+        return min;
+    }
+
+    public float getMaxY() {
+        float max = 0;
+        for (Node node : nodes) {
+            float temp = node.y() + node.radius();
+            if (temp > max) {
+                max = temp;
+            }
+        }
+        return max;
+    }
+
+    public float getMinY() {
+        float min = 0;
+        for (Node node : nodes) {
+            float temp = node.y() - node.radius();
+            if (temp < min) {
+                min = temp;
+            }
+        }
+        return min;
+    }
 }

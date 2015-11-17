@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GraphsinTouch.iml" filepath="$PROJECT_DIR$/GraphsinTouch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Graphs_in_Touch.iml" filepath="$PROJECT_DIR$/Graphs_in_Touch.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
