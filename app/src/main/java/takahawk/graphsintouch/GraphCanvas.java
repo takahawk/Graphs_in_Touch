@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.support.annotation.IntegerRes;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 
@@ -29,6 +30,7 @@ public class GraphCanvas
     public static final float MIN_SCALE = 0.1f;
     public static final float EDGE_TIP_LENGTH = 35;
     public static final double EDGE_TIP_ANGLE = Math.PI / 6;
+    public static final float SCROLLBAR_WIDTH = 20;
 
     private float initX = 0;
     private float initY = 0;
@@ -45,6 +47,8 @@ public class GraphCanvas
     Paint borderPaint;
     Paint selectionPaint;
     Paint markerPaint;
+    Paint scrollbarPaint;
+
     Path edgeTip;
 
     public GraphCanvas(Context context, GraphView graphView) {
@@ -76,6 +80,9 @@ public class GraphCanvas
         markerPaint = new Paint();
         markerPaint.setColor(Color.CYAN);
         markerPaint.setStrokeWidth(10);
+
+        scrollbarPaint = new Paint();
+        scrollbarPaint.setColor(Color.GRAY);
 
         edgeTip = new Path();
 
@@ -208,6 +215,8 @@ public class GraphCanvas
                     x2,
                     y2, markerPaint);
         }
+
+        drawScrollbars(canvas);
     }
 
 
@@ -219,5 +228,24 @@ public class GraphCanvas
         int numOfChars = textPaint.breakText(text,true,width,null);
         int start = (text.length()-numOfChars)/2;
         canvas.drawText(text,start,start+numOfChars,r.centerX(),r.centerY(),textPaint);
+    }
+
+    private void drawScrollbars(Canvas canvas) {
+        double minX = graphView.getMinX(); minX = minX < initX ? minX : initX;
+        double minY = graphView.getMinY(); minY = minY < initY ? minY : initY;
+        double maxX = graphView.getMaxX(); maxX = maxX > initX ? maxX : initX;
+        double maxY = graphView.getMaxY(); maxY = maxY > initX ? maxY : initY;
+        Log.v("GRAPH", "MinX: " + minX);
+        Log.v("GRAPH", "MaxX: " + maxX);
+        Log.v("GRAPH", "MinY: " + minY);
+        Log.v("GRAPH", "MaxY: " + maxY);
+        if ((maxX - minX) / scaleX > getWidth()) {
+
+            canvas.drawRect((float) (initX / (maxX - minX) * getWidth()),
+                    getHeight() - SCROLLBAR_WIDTH,
+                    (float) ((initX + getWidth()) / (maxX - minX) * getWidth()),
+                    getHeight(),
+                    scrollbarPaint);
+        }
     }
 }
