@@ -3,6 +3,7 @@ package takahawk.graphsintouch.view;
 import takahawk.graphsintouch.controller.GraphController;
 import takahawk.graphsintouch.core.Graph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -12,11 +13,13 @@ import java.util.List;
  * Platform independent graph view
  * @author takahawk
  */
-public class GraphView {
+public class GraphView
+    implements Serializable {
 
     public static final float BASE_EDGE_SELECTION_WIDTH = 50;
     private float nodeRadius;
     private boolean directedEdges;
+    private GraphController controller;
 
     protected List<Node> nodes = new ArrayList<Node>();
     protected List<Edge> edges = new ArrayList<Edge>();
@@ -27,11 +30,16 @@ public class GraphView {
         this.nodeRadius = nodeRadius;
         this.directedEdges = directedEdges;
     }
+
     public GraphController getController() {
-        return new GraphController(new Control());
+        if (controller == null)
+            controller = new GraphController(new Control());
+        controller.validate();
+        return controller;
     }
 
-    public class Control {
+    public class Control
+        implements Serializable {
 
         public final float radius = nodeRadius;
 

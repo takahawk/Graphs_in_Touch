@@ -248,4 +248,8 @@ public class GraphCanvas
                     scrollbarPaint);
         }
     }
+
+    public void setGraphView(GraphView view) {
+        graphView = view;
+    }
 }

@@ -2,11 +2,13 @@ package takahawk.graphsintouch.view;
 
 import android.util.Pair;
 
+import java.io.Serializable;
+
 /**
  * Created by takahawk on 31.10.2015.
  */
 public class Edge
-        implements NodeListener, Focusable {
+        implements NodeListener, Focusable, Serializable {
     public Node out;
     public Node in;
 

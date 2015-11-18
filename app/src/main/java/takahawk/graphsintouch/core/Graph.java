@@ -1,5 +1,6 @@
 package takahawk.graphsintouch.core;
 
+import java.io.Serializable;
 import java.util.*;
 
 import takahawk.takalibrary.DisjointSetForest;
@@ -7,7 +8,8 @@ import takahawk.takalibrary.DisjointSetForest;
  * Graph is a representation of a set of objects where some pairs of objects are connected by links.
  * @author takahawk
  */
-public class Graph {
+public class Graph
+    implements Serializable {
     /*
         For graph representing used custom construction named by me 'Double-sided adjacency list'
         It looks like a usual adjacency list with exception: add another vertex-list that stores also INBOUND edges

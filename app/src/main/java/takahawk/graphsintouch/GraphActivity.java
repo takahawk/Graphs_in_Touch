@@ -25,6 +25,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import takahawk.graphsintouch.controller.GraphController;
 import takahawk.graphsintouch.view.GraphView;
 
@@ -55,6 +60,8 @@ public class GraphActivity
     private boolean drag = false;
     private float dragX;
     private float dragY;
+
+    GraphView graphView;
 
     // icons
     private ImageView addNodeIcon;
@@ -108,7 +115,7 @@ public class GraphActivity
 
         FragmentManager fm = getFragmentManager();
         graphFragment = (RetainGraphFragment) fm.findFragmentByTag("graph");
-        GraphView graphView;
+
         if (graphFragment == null) {
             graphView = new GraphView(GraphCanvas.BASE_NODE_RADIUS, true);
             controller = graphView.getController();
@@ -525,9 +532,6 @@ public class GraphActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void saveGraphToFile(View view) {
-        view.setBackgroundColor(Color.BLUE);
-    }
 
     public void showAlgorithms(View view) {
         if (permanentSnackbar != null)
@@ -780,6 +784,34 @@ public class GraphActivity
     public void changeValue(View view) {
         controller.changeElement(editValue.getText().toString());
         switchEditMode();
+    }
+
+    public void saveGraphToFile(View view) {
+        blink(view);
+        try {
+            FileOutputStream fos = openFileOutput("graph", Context.MODE_PRIVATE);
+            ObjectOutputStream os = new ObjectOutputStream(fos);
+            os.writeObject(graphView);
+            os.close();
+            fos.close();
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadGraphFromFile(View view) {
+        blink(view);
+        switchNormalMode();
+        try {
+            FileInputStream fis = openFileInput("graph");
+            ObjectInputStream is = new ObjectInputStream(fis);
+            graphView = (GraphView) is.readObject();
+            controller = graphView.getController();
+            canvas.setGraphView(graphView);
+            canvas.invalidate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

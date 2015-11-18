@@ -2,6 +2,7 @@ package takahawk.graphsintouch.controller;
 
 import android.util.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -19,17 +20,27 @@ import takahawk.graphsintouch.view.Node;
  * Controller class for manipulating platform-independent view and model.
  * @author takahawk
  */
-public class GraphController {
+public class GraphController
+    implements Serializable {
 
-    private static final java.util.Random rand = new java.util.Random();
+    private static transient java.util.Random rand = new java.util.Random();
     private GraphView.Control control;
     private Graph graph = new Graph(true);
-    private Focusable selected;
-    private Deque<Operation> undoDeque = new ArrayDeque<Operation>();
-    private Deque<Operation> redoDeque = new ArrayDeque<Operation>();
+    private transient Focusable selected;
+    private transient Deque<Operation> undoDeque = new ArrayDeque<Operation>();
+    private transient Deque<Operation> redoDeque = new ArrayDeque<Operation>();
 
     public GraphController(GraphView.Control control) {
         this.control = control;
+    }
+
+    public void validate() {
+        if (rand == null)
+            rand = new java.util.Random();
+        if (undoDeque == null)
+            undoDeque = new ArrayDeque<>();
+        if (redoDeque == null)
+            redoDeque = new ArrayDeque<>();
     }
 
     private Node nodeByNumber(int number) {
@@ -839,4 +850,5 @@ public class GraphController {
             control.setDirected(graph.isDirected());
         }
     }
+
 }

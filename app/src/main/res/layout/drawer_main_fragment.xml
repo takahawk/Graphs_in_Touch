@@ -9,7 +9,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="saveGraphToFile">
+        android:onClick="saveGraphToFile"
+        android:background="@drawable/blink"
+        >
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +32,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="loadGraphFromFile">
+        android:onClick="loadGraphFromFile"
+        android:background="@drawable/blink"
+        >
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

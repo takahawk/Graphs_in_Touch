@@ -1,5 +1,6 @@
 package takahawk.graphsintouch.view;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * @author takahawk
  */
 public class Node
-    implements Focusable {
+    implements Focusable, Serializable {
     private List<NodeListener> listeners = new ArrayList<NodeListener>();
     private float _x;
     private float _y;
