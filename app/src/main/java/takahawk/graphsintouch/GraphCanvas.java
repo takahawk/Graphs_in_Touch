@@ -235,15 +235,21 @@ public class GraphCanvas
         double minY = graphView.getMinY(); minY = minY < initY ? minY : initY;
         double maxX = graphView.getMaxX(); maxX = maxX > initX ? maxX : initX;
         double maxY = graphView.getMaxY(); maxY = maxY > initX ? maxY : initY;
+        Log.v("GRAPH", "InitX: " + initX);
         Log.v("GRAPH", "MinX: " + minX);
         Log.v("GRAPH", "MaxX: " + maxX);
         Log.v("GRAPH", "MinY: " + minY);
         Log.v("GRAPH", "MaxY: " + maxY);
-        if ((maxX - minX) / scaleX > getWidth()) {
-
-            canvas.drawRect((float) (initX / (maxX - minX) * getWidth()),
+        if (Math.abs((maxX - minX) / scaleX) > getWidth()) {
+            float x2 = (float) ((initX - minX) / (maxX - minX) * getWidth());
+            x2 = x2 > 0 ? x2 : 0;
+            float x1 = (float) (((initX - minX) + getWidth()) / (maxX - minX) * getWidth());
+            x1 = x1 < getWidth() ? x1 : getWidth();
+            x2 = getWidth() - x2;
+            x1 = getWidth() - x1;
+            canvas.drawRect(x1,
                     getHeight() - SCROLLBAR_WIDTH,
-                    (float) ((initX + getWidth()) / (maxX - minX) * getWidth()),
+                    x2,
                     getHeight(),
                     scrollbarPaint);
         }
