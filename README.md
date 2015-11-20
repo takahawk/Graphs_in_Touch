@@ -10,3 +10,4 @@ Android app for creating and performing algorithms on graphs
 * Add file dialogs
 * Add scrollbars of something equivalent
 * Fix zoom
+* Add more algorithms
